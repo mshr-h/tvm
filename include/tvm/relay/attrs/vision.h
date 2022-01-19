@@ -106,23 +106,27 @@ struct GetValidCountsAttrs : public tvm::AttrsNode<GetValidCountsAttrs> {
 
 /*! \brief Attributes used in detection_output operator */
 struct DetectionOutputAttrs : public tvm::AttrsNode<DetectionOutputAttrs> {
-  int bg_label_id;
-  int code_type;
-  double conf_th;
-  int keep_top_k;
-  double nms_th;
-  int nms_top_k;
   int num_classes;
   bool share_location;
+  int background_label_id;
+  double nms_threshold;
+  int nms_top_k;
+  double nms_eta;
+  int code_type;
+  bool variance_encoded_in_target;
+  int keep_top_k;
+  double confidence_threshold;
   TVM_DECLARE_ATTRS(DetectionOutputAttrs, "relay.attrs.DetectionOutputAttrs") {
-    TVM_ATTR_FIELD(bg_label_id).describe("Background label id.");
-    TVM_ATTR_FIELD(code_type).describe("???");
-    TVM_ATTR_FIELD(conf_th).describe("Confidencial threshold.");
-    TVM_ATTR_FIELD(keep_top_k).describe("Keep maximum top k detections before nms ?");
-    TVM_ATTR_FIELD(nms_th).describe("NonMaxSuppression threshold.");
-    TVM_ATTR_FIELD(nms_top_k).describe("Keep maximum top k detections after nms ?");
-    TVM_ATTR_FIELD(num_classes).describe("Number of Classes.");
-    TVM_ATTR_FIELD(share_location).describe("Share location or not.");
+    TVM_ATTR_FIELD(num_classes).describe("Number of classes to be predicted.");
+    TVM_ATTR_FIELD(share_location).describe("If true, bounding box are shared among different classes.");
+    TVM_ATTR_FIELD(background_label_id).describe("Background label id.");
+    TVM_ATTR_FIELD(nms_threshold).describe("Threshold to be used in nms.");
+    TVM_ATTR_FIELD(nms_top_k).describe("Maximum number of results to be kept.");
+    TVM_ATTR_FIELD(nms_eta).describe("Parameter for adaptive nms.");
+    TVM_ATTR_FIELD(code_type).describe("Type of coding method for bbox.");
+    TVM_ATTR_FIELD(variance_encoded_in_target).describe("If true, variance is encoded in target; otherwise we need to adjust the predicted offset accordingly.");
+    TVM_ATTR_FIELD(keep_top_k).describe("Number of total bboxes to be kept per image after nms step.");
+    TVM_ATTR_FIELD(confidence_threshold).describe("Only consider detections whose confidences are larger than a threshold.");
   }
 };
 

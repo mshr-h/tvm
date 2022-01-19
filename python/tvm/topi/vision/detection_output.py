@@ -544,19 +544,23 @@ def hybrid_nms_impl(
     return all_indices, output
 
 
+
+
 @tvm.target.generic_func
 def detection_output(
     loc,
     conf,
     priorbox,
-    bg_label_id,
-    code_type,
-    conf_th,
-    keep_top_k,
-    nms_th,
-    nms_top_k,
     num_classes,
     share_location,
+    background_label_id,
+    nms_threshold,
+    nms_top_k,
+    nms_eta,
+    code_type,
+    variance_encoded_in_target,
+    keep_top_k,
+    confidence_threshold
 ):
     """Detection Output (Non-maximum suppression) operator for object detection.
 
@@ -604,24 +608,22 @@ def detection_output(
 
     """
     num_loc_classes = 1 if share_location else num_classes
-    variance_encoded_in_target = False
-    eta = 1.0
     num_priors = int(int(priorbox.shape[2]) / 4)
     all_loc_preds, all_conf_scores, prior_bboxes, prior_variances = hybrid_prepare_detection_output(
         loc,
         conf,
         priorbox,
-        tvm.tir.const(bg_label_id, dtype="int32"),
+        tvm.tir.const(background_label_id, dtype="int32"),
         tvm.tir.const(code_type, dtype="int32"),
-        tvm.tir.const(conf_th, dtype="float"),
+        tvm.tir.const(confidence_threshold, dtype="float"),
         tvm.tir.const(keep_top_k, dtype="int32"),
-        tvm.tir.const(nms_th, dtype="float"),
+        tvm.tir.const(nms_threshold, dtype="float"),
         tvm.tir.const(nms_top_k, dtype="int32"),
         tvm.tir.const(num_classes, dtype="int32"),
         tvm.tir.const(share_location, dtype="bool"),
         tvm.tir.const(num_loc_classes, dtype="int32"),
         tvm.tir.const(variance_encoded_in_target, dtype="bool"),
-        tvm.tir.const(eta, dtype="float"),
+        tvm.tir.const(nms_eta, dtype="float"),
         tvm.tir.const(num_priors, dtype="int32"),
     )
 
@@ -633,7 +635,7 @@ def detection_output(
         prior_variances,
         tvm.tir.const(share_location, dtype="bool"),
         tvm.tir.const(num_loc_classes, dtype="int32"),
-        tvm.tir.const(bg_label_id, dtype="int32"),
+        tvm.tir.const(background_label_id, dtype="int32"),
         tvm.tir.const(code_type, dtype="int32"),
         tvm.tir.const(variance_encoded_in_target, dtype="bool"),
         tvm.tir.const(clip_bbox, dtype="bool"),
@@ -645,10 +647,10 @@ def detection_output(
         all_conf_scores,
         tvm.tir.const(share_location, dtype="bool"),
         tvm.tir.const(num_classes, dtype="int32"),
-        tvm.tir.const(bg_label_id, dtype="int32"),
-        tvm.tir.const(conf_th, dtype="float"),
-        tvm.tir.const(nms_th, dtype="float"),
-        tvm.tir.const(eta, dtype="float"),
+        tvm.tir.const(background_label_id, dtype="int32"),
+        tvm.tir.const(confidence_threshold, dtype="float"),
+        tvm.tir.const(nms_threshold, dtype="float"),
+        tvm.tir.const(nms_eta, dtype="float"),
         tvm.tir.const(nms_top_k, dtype="int32"),
         tvm.tir.const(keep_top_k, dtype="int32"),
     )

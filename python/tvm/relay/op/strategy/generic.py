@@ -1220,27 +1220,31 @@ def wrap_compute_detection_output(topi_compute):
     """wrap detection_output topi compute"""
 
     def _compute_detection_output(attrs, inputs, out_type):
-        bg_label_id = get_const_int(attrs.bg_label_id)
-        code_type = get_const_int(attrs.code_type)
-        conf_th = get_const_float(attrs.conf_th)
-        keep_top_k = get_const_int(attrs.keep_top_k)
-        nms_th = get_const_float(attrs.nms_th)
-        nms_top_k = get_const_int(attrs.nms_top_k)
         num_classes = get_const_int(attrs.num_classes)
         share_location = bool(get_const_int(attrs.share_location))
+        background_label_id = get_const_int(attrs.background_label_id)
+        nms_threshold = get_const_float(attrs.nms_threshold)
+        nms_top_k = get_const_int(attrs.nms_top_k)
+        nms_eta = get_const_float(attrs.nms_eta)
+        code_type = get_const_int(attrs.code_type)
+        variance_encoded_in_target = bool(get_const_int(attrs.variance_encoded_in_target))
+        keep_top_k = get_const_int(attrs.keep_top_k)
+        confidence_threshold = get_const_float(attrs.confidence_threshold)
         return [
             topi_compute(
                 inputs[0],
                 inputs[1],
                 inputs[2],
-                bg_label_id,
-                code_type,
-                conf_th,
-                keep_top_k,
-                nms_th,
-                nms_top_k,
                 num_classes,
                 share_location,
+                background_label_id,
+                nms_threshold,
+                nms_top_k,
+                nms_eta,
+                code_type,
+                variance_encoded_in_target,
+                keep_top_k,
+                confidence_threshold,
             )
         ]
 

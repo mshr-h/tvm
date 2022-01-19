@@ -45,17 +45,20 @@ bool DetectionOutputRel(const Array<Type>& types, int num_inputs, const Attrs& a
 }
 
 Expr MakeDetectionOutput(Expr loc, Expr conf, Expr priorbox,
-              int bg_label_id, int code_type, double conf_th, int keep_top_k,
-              double nms_th, int nms_top_k, int num_classes, bool share_location) {
+              int num_classes, bool share_location, int background_label_id,
+              double nms_threshold, int nms_top_k, double nms_eta, int code_type,
+              bool variance_encoded_in_target, int keep_top_k, double confidence_threshold) {
   auto attrs = make_object<DetectionOutputAttrs>();
-  attrs->bg_label_id = bg_label_id;
-  attrs->code_type = code_type;
-  attrs->conf_th = conf_th;
-  attrs->keep_top_k = keep_top_k;
-  attrs->nms_th = nms_th;
-  attrs->nms_top_k = nms_top_k;
   attrs->num_classes = num_classes;
   attrs->share_location = share_location;
+  attrs->background_label_id = background_label_id;
+  attrs->nms_threshold = nms_threshold;
+  attrs->nms_top_k = nms_top_k;
+  attrs->nms_eta = nms_eta;
+  attrs->code_type = code_type;
+  attrs->variance_encoded_in_target = variance_encoded_in_target;
+  attrs->keep_top_k = keep_top_k;
+  attrs->confidence_threshold = confidence_threshold;
   static const Op& op = Op::Get("vision.detection_output");
   return Call(op, {loc, conf, priorbox}, Attrs(attrs), {});
 }

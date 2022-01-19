@@ -15,20 +15,26 @@
 # specific language governing permissions and limitations
 # under the License.
 """Detection Output operations."""
-from tvm.relay import expr
 from . import _make
 
 def detection_output(
     loc,
     conf,
     priorbox,
-    bg_label_id,
-    code_type,
-    conf_th,
-    keep_top_k,
-    nms_th,
-    nms_top_k,
     num_classes,
     share_location,
+    background_label_id,
+    nms_threshold,
+    nms_top_k,
+    nms_eta,
+    code_type,
+    variance_encoded_in_target,
+    keep_top_k,
+    confidence_threshold
+
 ):
-    return _make.detection_output(loc, conf, priorbox, bg_label_id, code_type, conf_th, keep_top_k, nms_th, nms_top_k, num_classes, share_location)
+    return _make.detection_output(loc, conf, priorbox,
+                                  num_classes, share_location, background_label_id,
+                                  nms_threshold, nms_top_k, nms_eta, code_type,
+                                  variance_encoded_in_target, keep_top_k,
+                                  confidence_threshold)
