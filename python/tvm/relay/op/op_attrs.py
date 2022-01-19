@@ -329,6 +329,11 @@ class GetValidCountsAttrs(Attrs):
     """Attributes for vision.get_valid_counts"""
 
 
+@tvm._ffi.register_object("relay.attrs.DetectionOutputAttrs")
+class DetectionOutputAttrs(Attrs):
+    """Attributes for vision.detection_output"""
+
+
 @tvm._ffi.register_object("relay.attrs.NonMaximumSuppressionAttrs")
 class NonMaximumSuppressionAttrs(Attrs):
     """Attributes for vision.non_maximum_suppression"""

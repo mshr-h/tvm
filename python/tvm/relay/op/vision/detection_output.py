@@ -14,13 +14,21 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
+"""Detection Output operations."""
+from tvm.relay import expr
+from . import _make
 
-# pylint: disable=wildcard-import
-"""VISION network operators"""
-from __future__ import absolute_import as _abs
-
-from . import ssd
-from .reorg import *
-from .detection_output import *
-from .nms import *
-from .rcnn import *
+def detection_output(
+    loc,
+    conf,
+    priorbox,
+    bg_label_id,
+    code_type,
+    conf_th,
+    keep_top_k,
+    nms_th,
+    nms_top_k,
+    num_classes,
+    share_location,
+):
+    return _make.detection_output(loc, conf, priorbox, bg_label_id, code_type, conf_th, keep_top_k, nms_th, nms_top_k, num_classes, share_location)

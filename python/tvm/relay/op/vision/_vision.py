@@ -46,6 +46,11 @@ reg.register_strategy("vision.get_valid_counts", strategy.get_valid_counts_strat
 reg.register_pattern("vision.get_valid_counts", OpPattern.OPAQUE)
 
 
+# detection_output
+reg.register_strategy("vision.detection_output", strategy.detection_output_strategy)
+reg.register_pattern("vision.detection_output", OpPattern.OPAQUE)
+
+
 # non-maximum suppression
 reg.register_strategy("vision.non_max_suppression", strategy.nms_strategy)
 reg.register_pattern("vision.non_max_suppression", OpPattern.OPAQUE)

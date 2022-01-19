@@ -21,6 +21,7 @@ from .priorbox import *
 from .nms import *
 from .rcnn import *
 from .yolo import *
+from .detection_output import *
 from . import _rcnn
 from . import _yolo
 from . import _vision

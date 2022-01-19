@@ -1215,6 +1215,50 @@ def get_valid_counts_strategy(attrs, inputs, out_type, target):
     return strategy
 
 
+# Detection Output (NonMaxSuppression)
+def wrap_compute_detection_output(topi_compute):
+    """wrap detection_output topi compute"""
+
+    def _compute_detection_output(attrs, inputs, out_type):
+        bg_label_id = get_const_int(attrs.bg_label_id)
+        code_type = get_const_int(attrs.code_type)
+        conf_th = get_const_float(attrs.conf_th)
+        keep_top_k = get_const_int(attrs.keep_top_k)
+        nms_th = get_const_float(attrs.nms_th)
+        nms_top_k = get_const_int(attrs.nms_top_k)
+        num_classes = get_const_int(attrs.num_classes)
+        share_location = bool(get_const_int(attrs.share_location))
+        return [
+            topi_compute(
+                inputs[0],
+                inputs[1],
+                inputs[2],
+                bg_label_id,
+                code_type,
+                conf_th,
+                keep_top_k,
+                nms_th,
+                nms_top_k,
+                num_classes,
+                share_location,
+            )
+        ]
+
+    return _compute_detection_output
+
+
+@override_native_generic_func("detection_output_strategy")
+def detection_output_strategy(attrs, inputs, out_type, target):
+    """detection output generic strategy"""
+    strategy = _op.OpStrategy()
+    strategy.add_implementation(
+        wrap_compute_detection_output(topi.vision.detection_output),
+        wrap_topi_schedule(topi.generic.schedule_detection_output),
+        name="detection_output.generic",
+    )
+    return strategy
+
+
 # non-maximum suppression
 def wrap_compute_nms(topi_compute):
     """wrap nms topi compute"""

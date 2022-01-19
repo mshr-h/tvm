@@ -50,6 +50,7 @@ class OperatorConverter(object):
             "Convolution": self.convert_conv,
             "Crop": self.convert_crop,
             "Deconvolution": self.convert_deconv,
+            "DetectionOutput": self.convert_detection_output,
             "Dropout": self.convert_dropout,
             "Eltwise": self.convert_eltwise,
             "Embed": self.convert_embed,
@@ -809,6 +810,31 @@ class OperatorConverter(object):
         out = _vision.priorbox(layer_expr, data_expr, min_sizes,
                                max_sizes, aspect_ratio, variance,
                                offset, flip, clip)
+        return out
+
+    def convert_detection_output(self, op):
+        """Convert DetectionOutput layer"""
+        inputs = op.bottom
+        loc_expr = self.exp_tab.get_expr(inputs[0])
+        conf_expr = self.exp_tab.get_expr(inputs[1])
+        box_expr = self.exp_tab.get_expr(inputs[2])
+
+        detection_output_param = op.detection_output_param
+        bg_label_id = detection_output_param.background_label_id
+        code_type = detection_output_param.code_type
+        conf_th = detection_output_param.confidence_threshold
+        keep_top_k = detection_output_param.keep_top_k
+        nms_th = detection_output_param.nms_param.nms_threshold
+        nms_top_k = detection_output_param.nms_param.top_k
+        num_classes = detection_output_param.num_classes
+        share_location = detection_output_param.share_location
+
+        assert detection_output_param.share_location is True, "Only support share_location=True"
+        assert detection_output_param.background_label_id == 0, "Only support background_label_id=0"
+
+        out = _vision.detection_output(loc_expr, conf_expr, box_expr,
+                bg_label_id, code_type, conf_th, keep_top_k,
+                nms_th, nms_top_k, num_classes, share_location)
         return out
 
     def check_unsupported_ops(self):

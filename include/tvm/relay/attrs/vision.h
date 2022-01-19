@@ -104,6 +104,28 @@ struct GetValidCountsAttrs : public tvm::AttrsNode<GetValidCountsAttrs> {
   }
 };
 
+/*! \brief Attributes used in detection_output operator */
+struct DetectionOutputAttrs : public tvm::AttrsNode<DetectionOutputAttrs> {
+  int bg_label_id;
+  int code_type;
+  double conf_th;
+  int keep_top_k;
+  double nms_th;
+  int nms_top_k;
+  int num_classes;
+  bool share_location;
+  TVM_DECLARE_ATTRS(DetectionOutputAttrs, "relay.attrs.DetectionOutputAttrs") {
+    TVM_ATTR_FIELD(bg_label_id).describe("Background label id.");
+    TVM_ATTR_FIELD(code_type).describe("???");
+    TVM_ATTR_FIELD(conf_th).describe("Confidencial threshold.");
+    TVM_ATTR_FIELD(keep_top_k).describe("Keep maximum top k detections before nms ?");
+    TVM_ATTR_FIELD(nms_th).describe("NonMaxSuppression threshold.");
+    TVM_ATTR_FIELD(nms_top_k).describe("Keep maximum top k detections after nms ?");
+    TVM_ATTR_FIELD(num_classes).describe("Number of Classes.");
+    TVM_ATTR_FIELD(share_location).describe("Share location or not.");
+  }
+};
+
 /*! \brief Attributes used in non_maximum_suppression operator */
 struct NonMaximumSuppressionAttrs : public tvm::AttrsNode<NonMaximumSuppressionAttrs> {
   bool force_suppress;

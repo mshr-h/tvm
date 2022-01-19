@@ -58,6 +58,23 @@ def schedule_get_valid_counts(outs):
     return _default_schedule(outs, False)
 
 
+def schedule_detection_output(outs):
+    """Schedule for detection output
+
+    Parameters
+    ----------
+    outs: Array of Tensor
+      The computation graph description of detection_output
+      in the format of an array of tensors.
+
+    Returns
+    -------
+    s: Schedule
+      The computation schedule for the op.
+    """
+    return _default_schedule(outs, False)
+
+
 def schedule_nms(outs):
     """Schedule for non-maximum suppression
 
