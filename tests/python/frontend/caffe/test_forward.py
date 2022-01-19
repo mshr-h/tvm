@@ -1020,6 +1020,156 @@ def test_forward_Embed():
 
 
 #######################################################################
+# Priorbox
+# --------
+
+
+def _test_PriorBox(data, **kwargs):
+    """One iteration of PriorBox."""
+    _test_op(data, L.PriorBox, "PriorBox", **kwargs)
+
+
+def test_forward_Priorbox():
+    """Priorbox"""
+    layer_data = np.random.rand(10, 10, 10, 10).astype(np.float32)
+    input_data = np.random.rand(10, 3, 100, 100).astype(np.float32)
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=4.0,
+            max_size=9.0,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=4.0,
+            max_size=9.0,
+            flip=False,
+            clip=False,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=4.0,
+            max_size=9.0,
+            flip=False,
+            clip=True,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=4.0,
+            max_size=9.0,
+            flip=True,
+            clip=True,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=4.0,
+            max_size=9.0,
+            flip=True,
+            clip=False,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=4.0,
+            max_size=9.0,
+            variance=[0.2],
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=4.0,
+            max_size=9.0,
+            variance=[0.1, 0.1, 0.2, 0.2],
+        ),
+    )
+
+    # Defined in MobileNet-SSD
+    layer_data = np.random.rand(1, 512, 10, 10).astype(np.float32)
+    input_data = np.random.rand(1, 3, 300, 300).astype(np.float32)
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=60.0,
+            aspect_ratio=2.0,
+            flip=True,
+            clip=False,
+            variance=[0.1, 0.1, 0.2, 0.2],
+            offset=0.5,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=105.0,
+            max_size=150.0,
+            aspect_ratio=[2.0, 3.0],
+            flip=True,
+            clip=False,
+            variance=[0.1, 0.1, 0.2, 0.2],
+            offset=0.5,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=150.0,
+            max_size=195.0,
+            aspect_ratio=[2.0, 3.0],
+            flip=True,
+            clip=False,
+            variance=[0.1, 0.1, 0.2, 0.2],
+            offset=0.5,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=195.0,
+            max_size=240.0,
+            aspect_ratio=[2.0, 3.0],
+            flip=True,
+            clip=False,
+            variance=[0.1, 0.1, 0.2, 0.2],
+            offset=0.5,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=240.0,
+            max_size=285.0,
+            aspect_ratio=[2.0, 3.0],
+            flip=True,
+            clip=False,
+            variance=[0.1, 0.1, 0.2, 0.2],
+            offset=0.5,
+        ),
+    )
+    _test_PriorBox(
+        [layer_data, input_data],
+        prior_box_param=dict(
+            min_size=285.0,
+            max_size=300.0,
+            aspect_ratio=[2.0, 3.0],
+            flip=True,
+            clip=False,
+            variance=[0.1, 0.1, 0.2, 0.2],
+            offset=0.5,
+        ),
+    )
+
+
+#######################################################################
 # Mobilenetv2
 # -----------
 
