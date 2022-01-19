@@ -1170,6 +1170,42 @@ def test_forward_Priorbox():
 
 
 #######################################################################
+# DetectionOutput
+# ---------------
+
+
+def _test_forward_DetectionOutput(data, **kwargs):
+    """One iteration of DetectionOutput"""
+    _test_op(data, L.DetectionOutput, "DetectionOutput", **kwargs)
+
+
+def test_forward_DetectionOutput():
+    """DetectionOutput"""
+    loc = np.random.rand(1, 2160).astype(np.float32)
+    conf = np.random.rand(1, 1620).astype(np.float32)
+    box = np.tile(np.array([0, 0, 1, 1]), (1, 1, 540)).astype(np.float32)
+    variance = np.tile(np.array([0.1, 0.1, 0.2, 0.2]), (1, 1, 540)).astype(np.float32)
+    box_v = np.concatenate([box, variance], axis=1).astype(np.float32)
+
+    _test_forward_DetectionOutput(
+        [loc, conf, box_v],
+        detection_output_param=dict(
+            num_classes=3,
+            share_location=True,
+            background_label_id=0,
+            nms_param=dict(
+                nms_threshold=0.5,
+                top_k=2,
+            ),
+            code_type=2,
+            variance_encoded_in_target=False,
+            keep_top_k=2,
+            confidence_threshold=0.25,
+        ),
+    )
+
+
+#######################################################################
 # Mobilenetv2
 # -----------
 
