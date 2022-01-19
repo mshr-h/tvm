@@ -1131,6 +1131,37 @@ def multibox_prior_strategy(attrs, inputs, out_type, target):
     return strategy
 
 
+# priorbox
+def wrap_compute_priorbox(topi_compute):
+    """Wrap priorbox compute"""
+
+    def _compute_priorbox(attrs, inputs, out_type):
+        """Compute definition of priorbox"""
+        min_size      = get_float_tuple(attrs.min_size)
+        max_size      = get_float_tuple(attrs.max_size)
+        aspect_ratios = get_float_tuple(attrs.aspect_ratios)
+        variance      = get_float_tuple(attrs.variance)
+        offset        = get_const_float(attrs.offset)
+        flip          = bool(get_const_int(attrs.flip))
+        clip          = bool(get_const_int(attrs.clip))
+        return [topi_compute(inputs[0], inputs[1], min_size, max_size, aspect_ratios, variance, offset, flip, clip)]
+
+    return _compute_priorbox
+
+
+@override_native_generic_func("priorbox_strategy")
+def priorbox_strategy(attrs, inputs, out_type, target):
+
+    """priorbox generic strategy"""
+    strategy = _op.OpStrategy()
+    strategy.add_implementation(
+        wrap_compute_priorbox(topi.vision.ssd.priorbox),
+        wrap_topi_schedule(topi.generic.schedule_priorbox),
+        name="priorbox.generic",
+    )
+    return strategy
+
+
 # multibox_transform_loc
 def wrap_compute_multibox_transform_loc(topi_compute):
     """Wrap multibox_transform_loc compute"""

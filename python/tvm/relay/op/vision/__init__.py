@@ -17,6 +17,7 @@
 # pylint: disable=wildcard-import
 """Vision network related operators."""
 from .multibox import *
+from .priorbox import *
 from .nms import *
 from .rcnn import *
 from .yolo import *

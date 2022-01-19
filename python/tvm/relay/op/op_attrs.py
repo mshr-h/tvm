@@ -314,6 +314,11 @@ class MultiBoxPriorAttrs(Attrs):
     """Attributes for vision.multibox_prior"""
 
 
+@tvm._ffi.register_object("relay.attrs.PriorBoxAttrs")
+class PriorBoxAttrs(Attrs):
+    """Attributes for vision.priorbox"""
+
+
 @tvm._ffi.register_object("relay.attrs.MultiBoxTransformLocAttrs")
 class MultiBoxTransformLocAttrs(Attrs):
     """Attributes for vision.multibox_transform_loc"""

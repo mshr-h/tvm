@@ -27,6 +27,7 @@ from .. import analysis
 from .. import expr as _expr
 from .. import function as _function
 from .. import op as _op
+from .. import vision as _vision
 from .common import ExprTable
 from .common import infer_shape as _infer_shape
 
@@ -59,6 +60,7 @@ class OperatorConverter(object):
             "Permute": self.convert_permute,
             "Pooling": self.convert_pooling,
             "PReLU": self.convert_prelu,
+            "PriorBox": self.convert_prior_box,
             "ReLU": self.convert_relu,
             "Reshape": self.convert_reshape,
             "Scale": self.convert_scale,
@@ -760,6 +762,53 @@ class OperatorConverter(object):
         out_shape.append(num_output)
         out = _op.reshape(out, out_shape)
 
+        return out
+
+    def convert_prior_box(self, op):
+        """Convert Priorbox layer"""
+        inputs = op.bottom
+        assert len(inputs) == 2, "Need two inputs of Priorbox layer"
+
+        layer_expr = self.exp_tab.get_expr(inputs[0])
+        data_expr = self.exp_tab.get_expr(inputs[1])
+
+        prior_box_param = op.prior_box_param
+
+        # Check min_size and max_size
+        min_sizes = list(prior_box_param.min_size)
+        max_sizes = list(prior_box_param.max_size)
+        if len(max_sizes) > 0:
+            assert len(min_sizes) == len(max_sizes)
+            assert all(min_size < max_size for min_size, max_size in zip(min_sizes, max_sizes)), "max_size must be greater than min_size."
+
+        flip = prior_box_param.flip
+
+        # default aspect ratio 1.0
+        aspect_ratio = [1.0]
+        
+        for ar in list(prior_box_param.aspect_ratio):
+            aspect_ratio.append(ar)
+            # If flip is true, will also append flipped aspect ratio
+            if flip:
+                aspect_ratio.append(1.0/ar)
+
+        # Variance
+        if len(prior_box_param.variance) > 1:
+            assert len(prior_box_param.variance) == 4, "Must and only provide 4 variance."
+            variance = list(prior_box_param.variance)
+        elif len(prior_box_param.variance) == 1:
+            variance = list(prior_box_param.variance) * 4
+        else:
+            # Set default to 0.1
+            variance = [0.1]
+        assert all((v > 0 for v in variance)), "variance should be greater than 0."
+
+        offset = prior_box_param.offset
+        clip = prior_box_param.clip
+
+        out = _vision.priorbox(layer_expr, data_expr, min_sizes,
+                               max_sizes, aspect_ratio, variance,
+                               offset, flip, clip)
         return out
 
     def check_unsupported_ops(self):

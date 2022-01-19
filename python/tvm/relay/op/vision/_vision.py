@@ -31,6 +31,11 @@ reg.register_strategy("vision.multibox_prior", strategy.multibox_prior_strategy)
 reg.register_pattern("vision.multibox_prior", OpPattern.OPAQUE)
 
 
+# priorbox
+reg.register_strategy("vision.priorbox", strategy.priorbox_strategy)
+reg.register_pattern("vision.priorbox", OpPattern.OPAQUE)
+
+
 # multibox_transform_loc
 reg.register_strategy("vision.multibox_transform_loc", strategy.multibox_transform_loc_strategy)
 reg.register_pattern("vision.multibox_transform_loc", OpPattern.OPAQUE)

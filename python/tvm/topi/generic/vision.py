@@ -92,6 +92,23 @@ def schedule_multibox_prior(outs):
     return _default_schedule(outs, False)
 
 
+def schedule_priorbox(outs):
+    """Schedule for priorbox
+
+    Parameters
+    ----------
+    outs: Array of Tensor
+      The computation graph description of priorbox
+      in the format of an array of tensors.
+
+    Returns
+    -------
+    s: Schedule
+      The computation schedule for the op.
+    """
+    return _default_schedule(outs, False)
+
+
 def schedule_multibox_transform_loc(outs):
     """Schedule for multibox_transform_loc
 

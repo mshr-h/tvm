@@ -57,6 +57,26 @@ struct MultiBoxPriorAttrs : public tvm::AttrsNode<MultiBoxPriorAttrs> {
   }
 };
 
+/*! \brief Attributes used in prior_box operators */
+struct PriorBoxAttrs : public tvm::AttrsNode<PriorBoxAttrs> {
+  Array<IndexExpr> min_size;
+  Array<IndexExpr> max_size;
+  Array<IndexExpr> aspect_ratios;
+  Array<IndexExpr> variance;
+  double offset;
+  bool flip;
+  bool clip;
+  TVM_DECLARE_ATTRS(PriorBoxAttrs, "relay.attrs.PriorBoxAttrs") {
+    TVM_ATTR_FIELD(min_size).describe("Minimum box size in pixels. can be multiple.");
+    TVM_ATTR_FIELD(max_size).describe("Maximum box size in pixels. can be ignored or same as the number of min_size.");
+    TVM_ATTR_FIELD(aspect_ratios).describe("Various of aspect ratios. Duplicate ratios will be ignored. If none is provided, we use default ratio 1.0.");
+    TVM_ATTR_FIELD(variance).set_default(Array<IndexExpr>({0.1f})).describe("Variance for adjusting the prior bboxes.");
+    TVM_ATTR_FIELD(offset).describe("Offset to the top left corner of each cell.");
+    TVM_ATTR_FIELD(flip).set_default(true).describe("If true, will flip each aspect ratio.");
+    TVM_ATTR_FIELD(clip).set_default(false).describe("Clip the prior's coordidate such that it is within [0, 1].");
+  }
+};
+
 struct MultiBoxTransformLocAttrs : public tvm::AttrsNode<MultiBoxTransformLocAttrs> {
   bool clip;
   double threshold;
