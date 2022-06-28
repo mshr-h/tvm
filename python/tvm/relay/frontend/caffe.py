@@ -816,6 +816,72 @@ class OperatorConverter(object):
         """Convert DetectionOutput layer"""
         inputs = op.bottom
         loc_expr = self.exp_tab.get_expr(inputs[0])
+
+        box_expr = self.exp_tab.get_expr(inputs[2])
+        box_shape = list(_infer_shape(box_expr))
+        box_expr = _op.reshape(data=box_expr, newshape=(1, box_shape[2], 4))
+
+        conf_expr = self.exp_tab.get_expr(inputs[1])
+        conf_expr = _op.reshape(data=conf_expr, newshape=(1, box_shape[2], -1))
+        conf_expr = _op.transpose(conf_expr, [0, 2, 1])
+
+        # parse detection_output params
+        detection_output_param = op.detection_output_param
+        share_location = detection_output_param.share_location
+        background_label_id = detection_output_param.background_label_id
+        nms_top_k = detection_output_param.nms_param.top_k
+        nms_threshold = detection_output_param.nms_param.nms_threshold
+        confidence_threshold = detection_output_param.confidence_threshold
+        keep_top_k = detection_output_param.keep_top_k
+
+        assert share_location is True, "share_location should be True"
+        assert background_label_id == 0, "background_label_id should be 0"
+
+        mbox_params = dict()
+        mbox_params["clip"] = False
+        mbox_params["threshold"] = confidence_threshold
+        mbox_params["variances"] = [0.1, 0.1, 0.2, 0.2]
+
+        nms_params = dict()
+        nms_params["return_indices"] = False
+        nms_params["iou_threshold"] = nms_threshold
+        nms_params["force_suppress"] = False
+        nms_params["top_k"] = nms_top_k
+        nms_params["invalid_to_bottom"] = True
+
+        max_output_size = keep_top_k
+
+        ret = _op.vision.multibox_transform_loc(conf_expr, loc_expr, box_expr, **mbox_params)
+
+        valid_count, data, out_indices = _op.vision.get_valid_counts(ret[0], nms_threshold)
+
+        out = _op.vision.non_max_suppression(
+            data=data,
+            valid_count=valid_count,
+            indices=out_indices,
+            max_output_size=max_output_size,
+            **nms_params)
+        """
+        out = [batch_size, num_anchors, 6]
+            The last indice means [label, confidence, xmin, ymin, xmax, ymax]
+        """
+
+        """
+            batch_sizeをlast indiceに移動する
+            labelを+1する
+        """
+
+        """
+        Expected return
+            4-D tensor with shape [1, keep_top_k, 7]
+            The last indice means [image_id, label, confidence, xmin, ymin, xmax, ymax]
+        """
+        return out
+
+    def _convert_detection_output(self, op):
+        """Convert DetectionOutput layer"""
+        inputs = op.bottom
+        loc_expr = self.exp_tab.get_expr(inputs[0])
         conf_expr = self.exp_tab.get_expr(inputs[1])
         box_expr = self.exp_tab.get_expr(inputs[2])
 
