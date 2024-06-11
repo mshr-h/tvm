@@ -46,5 +46,7 @@ from .nn import (
     relu,
     rms_norm,
     silu,
+    hardsigmoid,
+    hardswish,
     softmax,
 )

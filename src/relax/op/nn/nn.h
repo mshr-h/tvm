@@ -60,6 +60,12 @@ Expr gelu_tanh(Expr data);
 /*! \brief Sigmoid Linear Unit function. */
 Expr silu(Expr data);
 
+/*! \brief Hardsigmoid function. */
+Expr hardsigmoid(Expr data);
+
+/*! \brief Hardswish function. */
+Expr hardswish(Expr data);
+
 /*! \brief Softmax function. */
 Expr softmax(Expr data, int axis);
 

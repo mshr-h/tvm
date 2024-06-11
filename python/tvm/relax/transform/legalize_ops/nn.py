@@ -518,6 +518,23 @@ def _nn_silu(bb: BlockBuilder, call: Call) -> Expr:
     return bb.call_te(te_silu, call.args[0], primfunc_name_hint="silu")
 
 
+@register_legalize("relax.nn.hardsigmoid")
+def _nn_hardsigmoid(bb: BlockBuilder, call: Call) -> Expr:
+    def te_hardsigmoid(x: te.Tensor):
+        dtype = x.dtype
+        return topi.clip(x + tir.const(3, dtype), 0, 6)/tir.const(6, dtype)
+    return bb.call_te(te_hardsigmoid, call.args[0], primfunc_name_hint="hardsigmoid")
+
+
+@register_legalize("relax.nn.hardswish")
+def _nn_hardswish(bb: BlockBuilder, call: Call) -> Expr:
+    def te_hardswish(x: te.Tensor):
+        dtype = x.dtype
+        return topi.multiply(x, topi.clip(x + tir.const(3, dtype), 0, 6)/tir.const(6, dtype))
+
+    return bb.call_te(te_hardswish, call.args[0], primfunc_name_hint="hardswish")
+
+
 @register_legalize("relax.nn.softmax")
 def _nn_softmax(bb: BlockBuilder, call: Call) -> Expr:
     return bb.call_te(topi.nn.softmax, call.args[0], call.attrs.axis)

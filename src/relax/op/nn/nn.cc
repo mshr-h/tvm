@@ -37,6 +37,12 @@ RELAX_REGISTER_UNARY_NN_OP_AND_IMPL(gelu_tanh, "nn.gelu_tanh", /*require_float_d
 /* relax.nn.silu */
 RELAX_REGISTER_UNARY_NN_OP_AND_IMPL(silu, "nn.silu", /*require_float_dtype=*/true);
 
+/* relax.nn.hardsigmoid */
+RELAX_REGISTER_UNARY_NN_OP_AND_IMPL(hardsigmoid, "nn.hardsigmoid", /*require_float_dtype=*/true);
+
+/* relax.nn.hardswish */
+RELAX_REGISTER_UNARY_NN_OP_AND_IMPL(hardswish, "nn.hardswish", /*require_float_dtype=*/true);
+
 /* relax.nn.leakyrelu */
 TVM_REGISTER_NODE_TYPE(LeakyReluAttrs);
 

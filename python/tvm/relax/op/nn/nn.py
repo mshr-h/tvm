@@ -1321,6 +1321,52 @@ def silu(data: Expr) -> Expr:
     return _ffi_api.silu(data)  # type: ignore
 
 
+def hardsigmoid(data: Expr) -> Expr:
+    r"""Hardsigmoid function
+
+    .. math::
+        \text{SiLU}(x) = x * \text{sigmoid}(x)
+
+    Parameters
+    ----------
+    data : relax.Expr
+        The input data
+
+    Returns
+    -------
+    result : relax.Expr
+        The computed result.
+
+    Note
+    ----
+    The input tensor is required to have float dtype
+    """
+    return _ffi_api.hardsigmoid(data)  # type: ignore
+
+
+def hardswish(data: Expr) -> Expr:
+    r"""Hardswish function
+
+    .. math::
+        \text{SiLU}(x) = x * \text{sigmoid}(x)
+
+    Parameters
+    ----------
+    data : relax.Expr
+        The input data
+
+    Returns
+    -------
+    result : relax.Expr
+        The computed result.
+
+    Note
+    ----
+    The input tensor is required to have float dtype
+    """
+    return _ffi_api.hardswish(data)  # type: ignore
+
+
 def softmax(data: Expr, axis: int = -1) -> Expr:
     r"""Computes softmax.
 

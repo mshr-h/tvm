@@ -1438,10 +1438,8 @@ def test_hardsigmoid():
             inp_0: R.Tensor((1, 3, 10, 10), dtype="float32")
         ) -> R.Tensor((1, 3, 10, 10), dtype="float32"):
             with R.dataflow():
-                lv: R.Tensor((1, 3, 10, 10), dtype="float32") = R.add(inp_0, R.const(3, "float32"))
-                lv1: R.Tensor((1, 3, 10, 10), dtype="float32") = R.clip(lv, 0, 6)
-                lv2: R.Tensor((1, 3, 10, 10), dtype="float32") = R.divide(lv1, R.const(6, "float32"))
-                gv: R.Tensor((1, 3, 10, 10), dtype="float32") = lv2
+                lv: R.Tensor((1, 3, 10, 10), dtype="float32") = R.nn.hardsigmoid(inp_0)
+                gv: R.Tensor((1, 3, 10, 10), dtype="float32") = lv
                 R.output(gv)
             return gv
 
@@ -1471,11 +1469,8 @@ def test_hardswish():
             inp_0: R.Tensor((1, 3, 10, 10), dtype="float32")
         ) -> R.Tensor((1, 3, 10, 10), dtype="float32"):
             with R.dataflow():
-                lv: R.Tensor((1, 3, 10, 10), dtype="float32") = R.add(inp_0, R.const(3, "float32"))
-                lv1: R.Tensor((1, 3, 10, 10), dtype="float32") = R.clip(lv, 0, 6)
-                lv2: R.Tensor((1, 3, 10, 10), dtype="float32") = R.divide(lv1, R.const(6, "float32"))
-                lv3: R.Tensor((1, 3, 10, 10), dtype="float32") = R.multiply(inp_0, lv2)
-                gv: R.Tensor((1, 3, 10, 10), dtype="float32") = lv3
+                lv: R.Tensor((1, 3, 10, 10), dtype="float32") = R.nn.hardswish(inp_0)
+                gv: R.Tensor((1, 3, 10, 10), dtype="float32") = lv
                 R.output(gv)
             return gv
 
