@@ -1503,6 +1503,219 @@ def test_silu_symbolic():
     tvm.ir.assert_structural_equal(mod, Expected)
 
 
+def test_hardsigmoid():
+    # fmt: off
+    @tvm.script.ir_module
+    class Hardsigmoid:
+        @R.function
+        def main(x: R.Tensor((2, 3), "float32")) -> R.Tensor((2, 3), "float32"):
+            gv: R.Tensor((2, 3), "float32") = R.nn.hardsigmoid(x)
+            return gv
+
+    @tvm.script.ir_module
+    class Expected:
+        @R.function
+        def main(x: R.Tensor((2, 3), dtype="float32")) -> R.Tensor((2, 3), dtype="float32"):
+            gv = R.call_tir(Expected.hardsigmoid, (x,), out_sinfo=R.Tensor((2, 3), dtype="float32"))
+            return gv
+
+        @T.prim_func(private=True)
+        def hardsigmoid(x: T.Buffer((T.int64(2), T.int64(3)), "float32"), T_divide: T.Buffer((T.int64(2), T.int64(3)), "float32")):
+            T.func_attr({"tir.noalias": T.bool(True)})
+            # with T.block("root"):
+            T_add = T.alloc_buffer((T.int64(2), T.int64(3)))
+            compute = T.alloc_buffer((T.int64(2), T.int64(3)))
+            for ax0, ax1 in T.grid(T.int64(2), T.int64(3)):
+                with T.block("T_add"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(x[v_ax0, v_ax1])
+                    T.writes(T_add[v_ax0, v_ax1])
+                    T_add[v_ax0, v_ax1] = x[v_ax0, v_ax1] + T.float32(3)
+            for i0, i1 in T.grid(T.int64(2), T.int64(3)):
+                with T.block("compute"):
+                    v_i0, v_i1 = T.axis.remap("SS", [i0, i1])
+                    T.reads(T_add[v_i0, v_i1])
+                    T.writes(compute[v_i0, v_i1])
+                    compute[v_i0, v_i1] = T.max(T.min(T_add[v_i0, v_i1], T.float32(6)), T.float32(0))
+            for ax0, ax1 in T.grid(T.int64(2), T.int64(3)):
+                with T.block("T_divide"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(compute[v_ax0, v_ax1])
+                    T.writes(T_divide[v_ax0, v_ax1])
+                    T_divide[v_ax0, v_ax1] = compute[v_ax0, v_ax1] * T.float32(0.16666666666666666)
+    # fmt: on
+
+    mod = LegalizeOps()(Hardsigmoid)
+    tvm.ir.assert_structural_equal(mod, Expected)
+
+
+def test_hardsigmoid_symbolic():
+    # fmt: off
+    @tvm.script.ir_module
+    class Hardsigmoid:
+        @R.function
+        def main(x: R.Tensor(("m", "n"), "float32")) -> R.Tensor(("m", "n"), "float32"):
+            m = T.int64()
+            n = T.int64()
+            gv: R.Tensor((m, n), "float32") = R.nn.hardsigmoid(x)
+            return gv
+
+    @tvm.script.ir_module
+    class Expected:
+        @R.function
+        def main(x: R.Tensor(("m", "n"), dtype="float32")) -> R.Tensor(("m", "n"), dtype="float32"):
+            m = T.int64()
+            n = T.int64()
+            gv = R.call_tir(Expected.hardsigmoid, (x,), out_sinfo=R.Tensor((m, n), dtype="float32"))
+            return gv
+
+        @T.prim_func(private=True)
+        def hardsigmoid(var_x: T.handle, var_T_divide: T.handle):
+            T.func_attr({"tir.noalias": T.bool(True)})
+            m, n = T.int64(), T.int64()
+            x = T.match_buffer(var_x, (m, n))
+            T_divide = T.match_buffer(var_T_divide, (m, n))
+            # with T.block("root"):
+            T_add = T.alloc_buffer((m, n))
+            compute = T.alloc_buffer((m, n))
+            for ax0, ax1 in T.grid(m, n):
+                with T.block("T_add"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(x[v_ax0, v_ax1])
+                    T.writes(T_add[v_ax0, v_ax1])
+                    T_add[v_ax0, v_ax1] = x[v_ax0, v_ax1] + T.float32(3)
+            for i0, i1 in T.grid(m, n):
+                with T.block("compute"):
+                    v_i0, v_i1 = T.axis.remap("SS", [i0, i1])
+                    T.reads(T_add[v_i0, v_i1])
+                    T.writes(compute[v_i0, v_i1])
+                    compute[v_i0, v_i1] = T.max(T.min(T_add[v_i0, v_i1], T.float32(6)), T.float32(0))
+            for ax0, ax1 in T.grid(m, n):
+                with T.block("T_divide"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(compute[v_ax0, v_ax1])
+                    T.writes(T_divide[v_ax0, v_ax1])
+                    T_divide[v_ax0, v_ax1] = compute[v_ax0, v_ax1] * T.float32(0.16666666666666666)
+    # fmt: on
+
+    mod = LegalizeOps()(Hardsigmoid)
+    tvm.ir.assert_structural_equal(mod, Expected)
+
+
+def test_hardswish():
+    # fmt: off
+    @tvm.script.ir_module
+    class Hardswish:
+        @R.function
+        def main(x: R.Tensor((2, 3), "float32")) -> R.Tensor((2, 3), "float32"):
+            gv: R.Tensor((2, 3), "float32") = R.nn.hardswish(x)
+            return gv
+
+    @tvm.script.ir_module
+    class Expected:
+        @R.function
+        def main(x: R.Tensor((2, 3), dtype="float32")) -> R.Tensor((2, 3), dtype="float32"):
+            gv = R.call_tir(Expected.hardswish, (x,), out_sinfo=R.Tensor((2, 3), dtype="float32"))
+            return gv
+
+        @T.prim_func(private=True)
+        def hardswish(x: T.Buffer((T.int64(2), T.int64(3)), "float32"), T_multiply: T.Buffer((T.int64(2), T.int64(3)), "float32")):
+            T.func_attr({"tir.noalias": T.bool(True)})
+            # with T.block("root"):
+            T_add = T.alloc_buffer((T.int64(2), T.int64(3)))
+            compute = T.alloc_buffer((T.int64(2), T.int64(3)))
+            T_divide = T.alloc_buffer((T.int64(2), T.int64(3)))
+            for ax0, ax1 in T.grid(T.int64(2), T.int64(3)):
+                with T.block("T_add"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(x[v_ax0, v_ax1])
+                    T.writes(T_add[v_ax0, v_ax1])
+                    T_add[v_ax0, v_ax1] = x[v_ax0, v_ax1] + T.float32(3)
+            for i0, i1 in T.grid(T.int64(2), T.int64(3)):
+                with T.block("compute"):
+                    v_i0, v_i1 = T.axis.remap("SS", [i0, i1])
+                    T.reads(T_add[v_i0, v_i1])
+                    T.writes(compute[v_i0, v_i1])
+                    compute[v_i0, v_i1] = T.max(T.min(T_add[v_i0, v_i1], T.float32(6)), T.float32(0))
+            for ax0, ax1 in T.grid(T.int64(2), T.int64(3)):
+                with T.block("T_divide"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(compute[v_ax0, v_ax1])
+                    T.writes(T_divide[v_ax0, v_ax1])
+                    T_divide[v_ax0, v_ax1] = compute[v_ax0, v_ax1] * T.float32(0.16666666666666666)
+            for ax0, ax1 in T.grid(T.int64(2), T.int64(3)):
+                with T.block("T_multiply"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(x[v_ax0, v_ax1], T_divide[v_ax0, v_ax1])
+                    T.writes(T_multiply[v_ax0, v_ax1])
+                    T_multiply[v_ax0, v_ax1] = x[v_ax0, v_ax1] * T_divide[v_ax0, v_ax1]
+    # fmt: on
+
+    mod = LegalizeOps()(Hardswish)
+    tvm.ir.assert_structural_equal(mod, Expected)
+
+
+def test_hardswish_symbolic():
+    # fmt: off
+    @tvm.script.ir_module
+    class Hardswish:
+        @R.function
+        def main(x: R.Tensor(("m", "n"), "float32")) -> R.Tensor(("m", "n"), "float32"):
+            m = T.int64()
+            n = T.int64()
+            gv: R.Tensor((m, n), "float32") = R.nn.hardswish(x)
+            return gv
+
+    @tvm.script.ir_module
+    class Expected:
+        @R.function
+        def main(x: R.Tensor(("m", "n"), dtype="float32")) -> R.Tensor(("m", "n"), dtype="float32"):
+            m = T.int64()
+            n = T.int64()
+            gv = R.call_tir(Expected.hardswish, (x,), out_sinfo=R.Tensor((m, n), dtype="float32"))
+            return gv
+
+        @T.prim_func(private=True)
+        def hardswish(var_x: T.handle, var_T_multiply: T.handle):
+            T.func_attr({"tir.noalias": T.bool(True)})
+            m, n = T.int64(), T.int64()
+            x = T.match_buffer(var_x, (m, n))
+            T_multiply = T.match_buffer(var_T_multiply, (m, n))
+            # with T.block("root"):
+            T_add = T.alloc_buffer((m, n))
+            compute = T.alloc_buffer((m, n))
+            T_divide = T.alloc_buffer((m, n))
+            for ax0, ax1 in T.grid(m, n):
+                with T.block("T_add"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(x[v_ax0, v_ax1])
+                    T.writes(T_add[v_ax0, v_ax1])
+                    T_add[v_ax0, v_ax1] = x[v_ax0, v_ax1] + T.float32(3)
+            for i0, i1 in T.grid(m, n):
+                with T.block("compute"):
+                    v_i0, v_i1 = T.axis.remap("SS", [i0, i1])
+                    T.reads(T_add[v_i0, v_i1])
+                    T.writes(compute[v_i0, v_i1])
+                    compute[v_i0, v_i1] = T.max(T.min(T_add[v_i0, v_i1], T.float32(6)), T.float32(0))
+            for ax0, ax1 in T.grid(m, n):
+                with T.block("T_divide"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(compute[v_ax0, v_ax1])
+                    T.writes(T_divide[v_ax0, v_ax1])
+                    T_divide[v_ax0, v_ax1] = compute[v_ax0, v_ax1] * T.float32(0.16666666666666666)
+            for ax0, ax1 in T.grid(m, n):
+                with T.block("T_multiply"):
+                    v_ax0, v_ax1 = T.axis.remap("SS", [ax0, ax1])
+                    T.reads(x[v_ax0, v_ax1], T_divide[v_ax0, v_ax1])
+                    T.writes(T_multiply[v_ax0, v_ax1])
+                    T_multiply[v_ax0, v_ax1] = x[v_ax0, v_ax1] * T_divide[v_ax0, v_ax1]
+    # fmt: on
+
+    mod = LegalizeOps()(Hardswish)
+    print(mod.script())
+    tvm.ir.assert_structural_equal(mod, Expected)
+
+
 def test_softmax():
     # fmt: off
     @tvm.script.ir_module
