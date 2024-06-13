@@ -625,6 +625,18 @@ def test_erf():
     verify_unary("Erf", [32, 32], dtype=TensorProto.FLOAT16)
 
 
+def test_mod():
+    pass
+
+
+def test_topk():
+    pass
+
+
+def test_gatherelements():
+    pass
+
+
 @pytest.mark.parametrize("reverse", [False])
 @pytest.mark.parametrize("exclusive", [False])
 def test_cumsum(reverse, exclusive):

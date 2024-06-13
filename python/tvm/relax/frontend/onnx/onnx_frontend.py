@@ -1918,6 +1918,33 @@ class Elu(OnnxOpConverter):
         ) + relax.op.nn.relu(inputs[0])
 
 
+class Mod():
+    """Converts an onnx Mod node into an equivalent Relax expression."""
+
+    @classmethod
+    def _impl_v10(cls, bb, inputs, attr, params):
+        return inputs[0]
+
+
+class TopK():
+    """Converts an onnx TopK node into an equivalent Relax expression."""
+
+    @classmethod
+    def _impl_v1(cls, bb, inputs, attr, params):
+        axis = attr.get("axis", -1)
+        k = attr.get("k", )
+        dtype = inputs[0].struct_info.dtype
+        return relax.op.topk(inputs[0], k, axis, dtype=dtype)
+
+
+class GatherElements():
+    """Converts an onnx GatherElements node into an equivalent Relax expression."""
+
+    @classmethod
+    def _impl_v11(cls, bb, inputs, attr, params):
+        return inputs[0]
+
+
 def _get_convert_map():
     return {
         "MatMul": MatMul,
@@ -1998,6 +2025,9 @@ def _get_convert_map():
         "Reciprocal": Reciprocal,
         "OneHot": OneHot,
         "Elu": Elu,
+        "Mod": Mod,
+        "TopK": TopK,
+        "GatherElements": GatherElements,
     }
 
 
