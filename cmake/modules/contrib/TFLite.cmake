@@ -40,16 +40,10 @@ if(NOT USE_TFLITE STREQUAL "OFF")
   endif()
 
   if (USE_TFLITE STREQUAL "ON")
-    set(USE_TFLITE ${USE_TENSORFLOW_PATH}/tensorflow/lite/tools/make/gen/*/lib)
+    set(USE_TFLITE ${USE_TENSORFLOW_PATH}/tensorflow/lite/tools/pip_package/gen/)
   endif()
-  find_library(TFLITE_CONTRIB_LIB libtensorflow-lite.a ${USE_TFLITE})
-  file(GLOB_RECURSE TFLITE_DEPS "${USE_TFLITE}/*.a")
-
-  # Manually exclude libfft2d_fft4f2d.a due to conflict with libfft2d_fftsg.a
-  list(REMOVE_ITEM TFLITE_DEPS "${USE_TFLITE}/_deps/fft2d-build/libfft2d_fft4f2d.a")
-
-  list(APPEND TVM_RUNTIME_LINKER_LIBS ${TFLITE_CONTRIB_LIB})
-  list(APPEND TVM_RUNTIME_LINKER_LIBS ${TFLITE_DEPS})
+  file(GLOB_RECURSE TFLITE_LIBS "${USE_TFLITE}/lib*.a")
+  list(APPEND TVM_RUNTIME_LINKER_LIBS ${TFLITE_LIBS})
 
   if (NOT USE_FLATBUFFERS_PATH STREQUAL "none")
     include_directories(${USE_FLATBUFFERS_PATH}/include)
