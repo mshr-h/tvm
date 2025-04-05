@@ -234,10 +234,10 @@ setup(
     url="https://tvm.apache.org/",
     download_url="https://github.com/apache/tvm/tags",
     author="Apache TVM",
-    license="Apache",
+    license="Apache-2.0",
     # See https://pypi.org/classifiers/
     classifiers=[
-        "License :: OSI Approved :: Apache Software License",
+        "Apache-2.0",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Education",
