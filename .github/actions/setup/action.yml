@@ -7,7 +7,7 @@ runs:
     with:
       path: ~/conda_pkgs_dir
       key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('**/conda/build-environment.yaml') }}
-  - uses: conda-incubator/setup-miniconda@v3
+  - uses: conda-incubator/setup-miniconda@v3.2
     continue-on-error: true
     id: conda1
     with:
@@ -18,7 +18,7 @@ runs:
       miniforge-version: latest
       python-version: 3.10
       condarc-file: conda/condarc
-  - uses: conda-incubator/setup-miniconda@v3
+  - uses: conda-incubator/setup-miniconda@v3.2
     if: steps.conda1.outcome == 'failure'
     with:
       activate-environment: tvm-build
