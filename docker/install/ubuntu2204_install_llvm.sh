@@ -35,6 +35,11 @@ echo deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main\
 echo deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main\
      >> /etc/apt/sources.list.d/llvm.list
 
+echo deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-21 main\
+     >> /etc/apt/sources.list.d/llvm.list
+echo deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy-21 main\
+     >> /etc/apt/sources.list.d/llvm.list
+
 echo deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main\
      >> /etc/apt/sources.list.d/llvm.list
 echo deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy main\

@@ -44,16 +44,17 @@ RUN bash /install/ubuntu_install_llvm.sh
 # Rust env (build early; takes a while)
 COPY install/ubuntu_install_rust.sh /install/ubuntu_install_rust.sh
 RUN bash /install/ubuntu_install_rust.sh
-ENV RUSTUP_HOME /opt/rust
-ENV CARGO_HOME /opt/rust
-ENV PATH $PATH:$CARGO_HOME/bin
-ENV PYTHONNOUSERSITE 1  # Disable .local directory from affecting CI.
+ENV RUSTUP_HOME=/opt/rust
+ENV CARGO_HOME=/opt/rust
+ENV PATH=$PATH:$CARGO_HOME/bin
+# Disable .local directory from affecting CI.
+ENV PYTHONNOUSERSITE=1
 
-ENV TVM_VENV /venv/apache-tvm-py3.9
+ENV TVM_VENV=/venv/apache-tvm-py3.10
 COPY python/bootstrap/lockfiles /install/python/bootstrap/lockfiles
 COPY install/ubuntu2004_install_python.sh /install/ubuntu2004_install_python.sh
 RUN bash /install/ubuntu2004_install_python.sh
-ENV PATH ${TVM_VENV}/bin:$PATH
+ENV PATH=${TVM_VENV}/bin:$PATH
 
 COPY install/ubuntu2004_install_python_package.sh /install/ubuntu2004_install_python_package.sh
 RUN bash /install/ubuntu2004_install_python_package.sh
@@ -62,11 +63,7 @@ RUN bash /install/ubuntu2004_install_python_package.sh
 COPY install/ubuntu2004_install_redis.sh /install/ubuntu2004_install_redis.sh
 RUN bash /install/ubuntu2004_install_redis.sh
 
-# Chisel deps for TSIM
-COPY install/ubuntu_install_sbt.sh /install/ubuntu_install_sbt.sh
-RUN bash /install/ubuntu_install_sbt.sh
-
 # sccache
 COPY install/ubuntu_install_sccache.sh /install/ubuntu_install_sccache.sh
 RUN bash /install/ubuntu_install_sccache.sh
-ENV PATH /opt/sccache:$PATH
+ENV PATH=/opt/sccache:$PATH

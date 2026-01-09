@@ -20,4 +20,4 @@ set -e
 set -u
 set -o pipefail
 
-pip3 install coremltools
+pip3 install coremltools==9.0

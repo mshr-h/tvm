@@ -20,8 +20,18 @@ set -e
 set -u
 set -o pipefail
 
+APACHE_RAT_VERSION=0.17
+APACHE_RAT_SHA512=32848673dc4fb639c33ad85172dfa9d7a4441a0144e407771c9f7eb6a9a0b7a9b557b9722af968500fae84a6e60775449d538e36e342f786f20945b1645294a0
+
+# parse argument if provided
+APACHE_RAT_VERSION=${1:-$APACHE_RAT_VERSION}
+APACHE_RAT_SHA512=${2:-$APACHE_RAT_SHA512}
+
+APACHE_RAT_FILENAME=apache-rat-${APACHE_RAT_VERSION}-bin.tar.gz
+
 cd /tmp
-wget -q https://archive.apache.org/dist/creadur/apache-rat-0.12/apache-rat-0.12-bin.tar.gz
-tar xf apache-rat-0.12-bin.tar.gz
-mv apache-rat-0.12/apache-rat-0.12.jar /bin/apache-rat.jar
-rm -rf apache-rat-0.12-bin.tar.gz apache-rat-0.12
+wget -q https://dlcdn.apache.org//creadur/apache-rat-${APACHE_RAT_VERSION}/${APACHE_RAT_FILENAME}
+echo "$APACHE_RAT_SHA512" ${APACHE_RAT_FILENAME} | sha512sum -c
+tar xf ${APACHE_RAT_FILENAME}
+mv apache-rat-${APACHE_RAT_VERSION}/apache-rat-${APACHE_RAT_VERSION}.jar /bin/apache-rat.jar
+rm -rf ${APACHE_RAT_FILENAME} apache-rat-${APACHE_RAT_VERSION}

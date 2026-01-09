@@ -209,7 +209,6 @@ exclude = '''
     | conda\/
     | docker\/
     | docs\/
-    | golang\/
     | include\/
     | jvm\/
     | licenses\/

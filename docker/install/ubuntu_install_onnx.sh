@@ -36,38 +36,38 @@ DEVICE=${1:-cpu}
 # Install the onnx package
 pip3 install future
 
-if [ "$PYTHON_VERSION" == "3.9" ]; then
+if [ "$PYTHON_VERSION" == "3.10" ]; then
     pip3 install \
-        onnx==1.16.0 \
-        onnxruntime==1.19.2 \
-        onnxoptimizer==0.2.7
+        onnx==1.20.0 \
+        onnxruntime==1.23.2 \
+        onnxoptimizer==0.4.2
 
     if [ "$DEVICE" == "cuda" ]; then
         pip3 install \
-            torch==2.7.0 \
-            torchvision==0.22.0 \
+            torch==2.9.1 \
+            torchvision==0.24.0 \
             --index-url https://download.pytorch.org/whl/cu118
     else
         pip3 install \
-            torch==2.7.0 \
-            torchvision==0.22.0 \
+            torch==2.9.1 \
+            torchvision==0.24.0 \
             --extra-index-url https://download.pytorch.org/whl/cpu
     fi
 elif [ "$PYTHON_VERSION" == "3.11" ]; then
     pip3 install \
-        onnx==1.17.0 \
-        onnxruntime==1.20.1 \
-        onnxoptimizer==0.2.7
+        onnx==1.20.0 \
+        onnxruntime==1.23.2 \
+        onnxoptimizer==0.4.2
 
     if [ "$DEVICE" == "cuda" ]; then
         pip3 install \
-            torch==2.7.0 \
-            torchvision==0.22.0 \
+            torch==2.9.1 \
+            torchvision==0.24.0 \
             --index-url https://download.pytorch.org/whl/cu118
     else
         pip3 install \
-            torch==2.7.0 \
-            torchvision==0.22.0 \
+            torch==2.9.1 \
+            torchvision==0.24.0 \
             --extra-index-url https://download.pytorch.org/whl/cpu
     fi
 else

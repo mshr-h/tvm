@@ -32,12 +32,13 @@ RUN bash /install/ubuntu_install_cmake_source.sh
 COPY install/ubuntu_install_googletest.sh /install/ubuntu_install_googletest.sh
 RUN bash /install/ubuntu_install_googletest.sh
 
-ENV TVM_VENV /venv/apache-tvm-py3.9
+ENV TVM_VENV=/venv/apache-tvm-py3.10
 COPY python/bootstrap/lockfiles /install/python/bootstrap/lockfiles
 COPY install/ubuntu_install_python.sh /install/ubuntu_install_python.sh
-RUN bash /install/ubuntu_install_python.sh 3.9
-ENV PATH ${TVM_VENV}/bin:$PATH
-ENV PYTHONNOUSERSITE 1  # Disable .local directory from affecting CI.
+RUN bash /install/ubuntu_install_python.sh 3.10
+ENV PATH=${TVM_VENV}/bin:$PATH
+# Disable .local directory from affecting CI.
+ENV PYTHONNOUSERSITE=1
 
 COPY install/ubuntu_install_python_package.sh /install/ubuntu_install_python_package.sh
 RUN bash /install/ubuntu_install_python_package.sh
@@ -45,9 +46,9 @@ RUN bash /install/ubuntu_install_python_package.sh
 # Rust env (build early; takes a while)
 COPY install/ubuntu_install_rust.sh /install/ubuntu_install_rust.sh
 RUN bash /install/ubuntu_install_rust.sh
-ENV RUSTUP_HOME /opt/rust
-ENV CARGO_HOME /opt/rust
-ENV PATH $PATH:$CARGO_HOME/bin
+ENV RUSTUP_HOME=/opt/rust
+ENV CARGO_HOME=/opt/rust
+ENV PATH=$PATH:$CARGO_HOME/bin
 
 COPY install/ubuntu2204_install_llvm.sh /install/ubuntu2204_install_llvm.sh
 RUN bash /install/ubuntu2204_install_llvm.sh
@@ -70,4 +71,4 @@ ENV EM_LLVM_ROOT=${EMSDK}/upstream/bin
 # sccache
 COPY install/ubuntu_install_sccache.sh /install/ubuntu_install_sccache.sh
 RUN bash /install/ubuntu_install_sccache.sh
-ENV PATH /opt/sccache:$PATH
+ENV PATH=/opt/sccache:$PATH

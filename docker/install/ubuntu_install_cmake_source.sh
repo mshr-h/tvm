@@ -20,10 +20,10 @@ set -e
 set -u
 set -o pipefail
 
-CMAKE_VERSION="3.30.4"
-CMAKE_SHA256="c759c97274f1e7aaaafcb1f0d261f9de9bf3a5d6ecb7e2df616324a46fe704b2"
+CMAKE_VERSION="3.31.10"
+CMAKE_SHA256="cf06fadfd6d41fa8e1ade5099e54976d1d844fd1487ab99942341f91b13d3e29"
 
-# parse argument
+# parse argument if provided
 CMAKE_VERSION=${1:-$CMAKE_VERSION}
 CMAKE_SHA256=${2:-$CMAKE_SHA256}
 

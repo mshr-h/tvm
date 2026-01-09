@@ -56,9 +56,6 @@ licenses/**  @tqchen @jroesch
 # JVM language
 jvm/**   @yzhliu
 
-# Golang
-golang/** @srkreddy1238
-
 # WASM
 web/** @tqchen @jroesch
 

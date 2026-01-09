@@ -20,8 +20,17 @@ set -e
 set -u
 set -o pipefail
 
+LIBTORCH_VERSION=2.0.0
+LIBTORCH_SHA256=2d67cff381186f2a01140348d2da7ab35d2e526c5703f4a8312c9428bef6df88
+
+# parse argument if provided
+LIBTORCH_VERSION=${1:-$LIBTORCH_VERSION}
+LIBTORCH_SHA256=${2:-$LIBTORCH_SHA256}
+
 pushd /usr/local/
-wget -q https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.0.0%2Bcpu.zip
-unzip libtorch-cxx11-abi-shared-with-deps-2.0.0+cpu.zip
-# now it is in /usr/local/libtorch
+  wget -q https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-${LIBTORCH_VERSION}%2Bcpu.zip
+  echo "$LIBTORCH_SHA256" libtorch-cxx11-abi-shared-with-deps-${LIBTORCH_VERSION}+cpu.zip | sha256sum -c
+  unzip libtorch-cxx11-abi-shared-with-deps-${LIBTORCH_VERSION}+cpu.zip
+  rm libtorch-cxx11-abi-shared-with-deps-${LIBTORCH_VERSION}+cpu.zip
+  # now it is in /usr/local/libtorch
 popd

@@ -20,11 +20,21 @@ set -e
 set -u
 set -o pipefail
 
-cd /tmp && wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-chmod +x Miniconda3-latest-Linux-x86_64.sh
-/tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda
-rm /tmp/Miniconda3-latest-Linux-x86_64.sh
-/opt/conda/bin/conda upgrade --all
-/opt/conda/bin/conda clean -ya
-/opt/conda/bin/conda install conda-build conda-verify
-chmod -R a+w /opt/conda/
+MINICONDA_FILENAME="Miniconda3-py313_25.11.1-1-Linux-x86_64.sh"
+MINICONDA_SHA256="e0b10e050e8928e2eb9aad2c522ee3b5d31d30048b8a9997663a8a460d538cef"
+
+# parse argument if provided
+MINICONDA_FILENAME=${1:-$MINICONDA_FILENAME}
+MINICONDA_SHA256=${2:-$MINICONDA_SHA256}
+
+MINICONDA_INSTALL_PATH="/opt/conda"
+
+cd /tmp && wget -q https://repo.anaconda.com/miniconda/${MINICONDA_FILENAME}
+echo "$MINICONDA_SHA256" ${MINICONDA_FILENAME} | sha256sum -c
+chmod +x ${MINICONDA_FILENAME}
+/tmp/${MINICONDA_FILENAME} -b -p ${MINICONDA_INSTALL_PATH}
+rm /tmp/${MINICONDA_FILENAME}
+${MINICONDA_INSTALL_PATH}/bin/conda upgrade --all
+${MINICONDA_INSTALL_PATH}/bin/conda clean -ya
+${MINICONDA_INSTALL_PATH}/bin/conda install conda-build conda-verify
+chmod -R a+w ${MINICONDA_INSTALL_PATH}
