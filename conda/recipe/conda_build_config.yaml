@@ -16,7 +16,7 @@
 # under the License.
 
 python:
-  - 3.10
+  - 3.9
 
 cuda:
   - False

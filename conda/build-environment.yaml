@@ -29,6 +29,7 @@ dependencies:
   - ninja
   - make
   - llvmdev >=11
+  - python >=3.9
   - pip
   - git
   - bzip2
