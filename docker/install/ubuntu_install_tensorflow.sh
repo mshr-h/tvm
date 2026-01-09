@@ -21,5 +21,5 @@ set -u
 set -o pipefail
 
 pip3 install \
-    keras==3.13.0 \
+    keras==3.12.0 \
     tensorflow==2.20.0
